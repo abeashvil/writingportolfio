@@ -1,0 +1,24 @@
+services:
+  # Web service (backend + frontend)
+  - type: web
+    name: writing-portfolio
+    runtime: node
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && node server.js
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: MONGODB_URI
+        fromDatabase:
+          name: writing-portfolio-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: NODE_ENV
+        value: production
+
+databases:
+  # MongoDB database
+  - name: writing-portfolio-db
+    databaseName: writing-portfolio
+    plan: free

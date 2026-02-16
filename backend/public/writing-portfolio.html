@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative Writing Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', 'Courier', monospace;
+            background: #f4ede3;
+            color: #2b2520;
+            line-height: 1.9;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Aged paper texture */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3' numOctaves='6' /%3E%3CfeColorMatrix values='0 0 0 0 0, 0 0 0 0 0, 0 0 0 0 0, 0 0 0 0.03 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.8;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Subtle coffee stains and age marks */
+        .age-mark {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.08;
+        }
+
+        .stain-1 {
+            width: 180px;
+            height: 200px;
+            background: radial-gradient(ellipse, rgba(101, 67, 33, 0.3), transparent 70%);
+            top: 8%;
+            right: 12%;
+            filter: blur(15px);
+        }
+
+        .stain-2 {
+            width: 220px;
+            height: 190px;
+            background: radial-gradient(ellipse, rgba(89, 60, 31, 0.25), transparent 65%);
+            bottom: 15%;
+            left: 8%;
+            filter: blur(20px);
+        }
+
+        .stain-3 {
+            width: 150px;
+            height: 160px;
+            background: radial-gradient(circle, rgba(112, 66, 20, 0.2), transparent 60%);
+            top: 45%;
+            left: 15%;
+            filter: blur(18px);
+        }
+
+        /* Subtle page fold/crease effect */
+        .page-crease {
+            position: fixed;
+            height: 100%;
+            width: 2px;
+            background: linear-gradient(to bottom, 
+                transparent 0%, 
+                rgba(139, 90, 43, 0.05) 20%, 
+                rgba(139, 90, 43, 0.08) 50%,
+                rgba(139, 90, 43, 0.05) 80%,
+                transparent 100%);
+            left: 15%;
+            top: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Header - typewriter style */
+        header {
+            padding: 5rem 2rem 3rem;
+            text-align: left;
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            border-bottom: 1px solid rgba(43, 37, 32, 0.15);
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 400;
+            color: #2b2520;
+            margin-bottom: 0.8rem;
+            letter-spacing: 0.15em;
+            line-height: 1.2;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #5a4f47;
+            font-style: italic;
+            font-weight: 400;
+            margin-left: 0.3rem;
+            letter-spacing: 0.05em;
+        }
+
+        /* Category navigation - typewriter tabs */
+        nav {
+            max-width: 900px;
+            margin: 0 auto 4rem;
+            padding: 0 2rem;
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        nav::before {
+            content: '>';
+            font-size: 1.1rem;
+            color: #5a4f47;
+            margin-right: 0.5rem;
+        }
+
+        nav button {
+            background: none;
+            border: none;
+            font-family: 'Courier New', 'Courier', monospace;
+            font-size: 0.95rem;
+            color: #5a4f47;
+            cursor: pointer;
+            position: relative;
+            padding: 0.2rem 0;
+            transition: color 0.3s ease;
+            letter-spacing: 0.05em;
+        }
+
+        nav button::before {
+            content: '[';
+            margin-right: 0.2rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        nav button::after {
+            content: ']';
+            margin-left: 0.2rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        nav button:hover::before,
+        nav button:hover::after,
+        nav button.active::before,
+        nav button.active::after {
+            opacity: 1;
+        }
+
+        nav button:hover {
+            color: #2b2520;
+        }
+
+        nav button.active {
+            color: #2b2520;
+            font-weight: 600;
+        }
+
+        /* Main content */
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 2rem 6rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Index/Listing view */
+        .index-view {
+            display: block;
+        }
+
+        .index-view.hidden {
+            display: none;
+        }
+
+        .piece-listing {
+            background: linear-gradient(to bottom, #fdfbf8 0%, #f7f3ec 100%);
+            padding: 1rem 1.5rem;
+            margin-bottom: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(43, 37, 32, 0.1);
+            position: relative;
+            box-shadow: 
+                0 1px 3px rgba(43, 37, 32, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+
+        .piece-listing::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: rgba(101, 67, 33, 0.2);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .piece-listing:hover {
+            transform: translateX(8px);
+            box-shadow: 
+                0 2px 6px rgba(43, 37, 32, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+
+        .piece-listing:hover::before {
+            opacity: 1;
+        }
+
+        .listing-title {
+            font-size: 1.1rem;
+            color: #2b2520;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.3rem;
+        }
+
+        .listing-meta {
+            font-size: 0.85rem;
+            color: #6a5f56;
+            font-style: italic;
+        }
+
+        /* Individual piece view */
+        .piece-view {
+            display: none;
+        }
+
+        .piece-view.active {
+            display: block;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Back button */
+        .back-button {
+            background: none;
+            border: none;
+            font-family: 'Courier New', 'Courier', monospace;
+            font-size: 0.9rem;
+            color: #5a4f47;
+            cursor: pointer;
+            margin-bottom: 2rem;
+            padding: 0.5rem 0;
+            transition: color 0.3s ease;
+            letter-spacing: 0.05em;
+        }
+
+        .back-button:hover {
+            color: #2b2520;
+        }
+
+        .back-button::before {
+            content: '← ';
+        }
+
+        /* Writing piece - worn paper sheet */
+        .writing-piece {
+            background: 
+                linear-gradient(to bottom, 
+                    rgba(255, 255, 255, 0.6) 0%,
+                    rgba(253, 251, 248, 0.8) 5%,
+                    rgba(247, 243, 236, 0.9) 100%
+                );
+            padding: 3rem;
+            position: relative;
+            border: 1px solid rgba(43, 37, 32, 0.12);
+            box-shadow: 
+                0 2px 8px rgba(43, 37, 32, 0.08),
+                0 1px 2px rgba(43, 37, 32, 0.06),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Worn edges - subtle and natural */
+        .writing-piece::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: 
+                linear-gradient(to right, 
+                    rgba(139, 90, 43, 0.08) 0%,
+                    transparent 3%,
+                    transparent 97%,
+                    rgba(139, 90, 43, 0.08) 100%
+                ),
+                linear-gradient(to bottom,
+                    rgba(139, 90, 43, 0.06) 0%,
+                    transparent 3%,
+                    transparent 97%,
+                    rgba(139, 90, 43, 0.1) 100%
+                );
+            opacity: 0.6;
+        }
+
+        /* Small creases and folds */
+        .writing-piece::after {
+            content: '';
+            position: absolute;
+            top: 15%;
+            right: 8%;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle at center, rgba(139, 90, 43, 0.04), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .piece-title {
+            font-size: 1.6rem;
+            color: #2b2520;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            line-height: 1.4;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-size: 1.3rem;
+        }
+
+        .piece-meta {
+            font-size: 0.85rem;
+            color: #6a5f56;
+            font-style: italic;
+            margin-bottom: 2rem;
+            letter-spacing: 0.03em;
+            padding-bottom: 1rem;
+            border-bottom: 1px dashed rgba(43, 37, 32, 0.2);
+        }
+
+        .piece-content {
+            font-size: 1rem;
+            line-height: 2;
+            color: #2b2520;
+            white-space: pre-wrap;
+            letter-spacing: 0.02em;
+        }
+
+        .piece-content p {
+            margin-bottom: 1.5rem;
+            text-indent: 2em;
+        }
+
+        .piece-content p:first-of-type {
+            text-indent: 0;
+        }
+
+        /* Poetry - centered typewriter style */
+        .poetry .piece-content {
+            text-align: center;
+            font-style: normal;
+            padding: 0 1rem;
+        }
+
+        .poetry .piece-content p {
+            text-indent: 0;
+        }
+
+        /* Scripts - authentic typewriter screenplay */
+        .script .piece-content {
+            font-size: 0.9rem;
+            line-height: 1.8;
+            color: #2b2520;
+            text-indent: 0;
+        }
+
+        .script .piece-content p {
+            text-indent: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            nav {
+                gap: 1.2rem;
+            }
+
+            .writing-piece {
+                padding: 2rem;
+            }
+
+            .piece-title {
+                font-size: 1.2rem;
+            }
+
+            .piece-content {
+                font-size: 0.95rem;
+            }
+        }
+
+        /* Smooth reveals */
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Subtle coffee stains and age marks -->
+    <div class="age-mark stain-1"></div>
+    <div class="age-mark stain-2"></div>
+    <div class="age-mark stain-3"></div>
+    
+    <!-- Subtle page crease -->
+    <div class="page-crease"></div>
+
+    <header>
+        <h1>CREATIVE<br>WRITING</h1>
+        <p class="subtitle">a collection of stories</p>
+        <a href="login.html" style="position: absolute; bottom: 1rem; right: 2rem; font-size: 0.75rem; color: rgba(90, 79, 71, 0.4); text-decoration: none; letter-spacing: 0.05em; transition: color 0.3s ease;" onmouseover="this.style.color='rgba(43, 37, 32, 0.6)'" onmouseout="this.style.color='rgba(90, 79, 71, 0.4)'">admin</a>
+    </header>
+
+    <nav>
+        <button class="active" onclick="filterPieces('all')">all works</button>
+        <button onclick="filterPieces('prose')">prose</button>
+        <button onclick="filterPieces('poetry')">poetry</button>
+        <button onclick="filterPieces('creative-nonfiction')">creative nonfiction</button>
+        <button onclick="filterPieces('script')">scripts</button>
+    </nav>
+
+    <main>
+        <!-- Index view showing all pieces as listings -->
+        <div class="index-view" id="indexView">
+        </div>
+
+        <!-- Individual piece views (hidden by default) -->
+        <div id="pieceViews"></div>
+    </main>
+
+    <script>
+        let pieces = [];
+        let currentCategory = 'all';
+
+        // Load pieces from backend API
+        async function loadPieces() {
+            try {
+                const response = await fetch('/api/pieces');
+                if (response.ok) {
+                    pieces = await response.json();
+                    renderIndex();
+                } else {
+                    console.error('Failed to load pieces');
+                    // Show error message to user
+                    document.getElementById('indexView').innerHTML = '<p style="color: #6a5f56; padding: 2rem; text-align: center;">Unable to load writing pieces. Please refresh the page.</p>';
+                }
+            } catch (error) {
+                console.error('Error loading pieces:', error);
+                document.getElementById('indexView').innerHTML = '<p style="color: #6a5f56; padding: 2rem; text-align: center;">Unable to connect to server. Please try again later.</p>';
+            }
+        }
+
+        function renderIndex() {
+            const indexView = document.getElementById('indexView');
+            const filteredPieces = currentCategory === 'all' 
+                ? pieces 
+                : pieces.filter(p => p.category === currentCategory);
+
+            if (filteredPieces.length === 0) {
+                indexView.innerHTML = '<p style="color: #6a5f56; padding: 2rem; text-align: center;">No pieces in this category yet.</p>';
+                return;
+            }
+
+            indexView.innerHTML = filteredPieces.map(piece => `
+                <div class="piece-listing" onclick="showPiece('${piece._id}')">
+                    <div class="listing-title">${piece.title}</div>
+                    <div class="listing-meta">${piece.meta}</div>
+                </div>
+            `).join('');
+        }
+
+        function showPiece(pieceId) {
+            const piece = pieces.find(p => p._id === pieceId);
+            if (!piece) return;
+
+            document.getElementById('indexView').classList.add('hidden');
+            
+            const pieceViews = document.getElementById('pieceViews');
+            pieceViews.innerHTML = `
+                <div class="piece-view active">
+                    <button class="back-button" onclick="backToIndex()">back to list</button>
+                    <article class="writing-piece ${piece.classes || ''}">
+                        <h2 class="piece-title">${piece.title}</h2>
+                        <div class="piece-meta">${piece.meta}</div>
+                        <div class="piece-content">${piece.content}</div>
+                    </article>
+                </div>
+            `;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function backToIndex() {
+            document.getElementById('indexView').classList.remove('hidden');
+            document.getElementById('pieceViews').innerHTML = '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function filterPieces(category) {
+            currentCategory = category;
+            
+            const buttons = document.querySelectorAll('nav button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            backToIndex();
+            renderIndex();
+        }
+
+        // Initial load
+        loadPieces();
+
+        // Refresh pieces when window gains focus (user returns from admin panel)
+        window.addEventListener('focus', function() {
+            loadPieces();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Creative Writing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', 'Courier', monospace;
+            background: #f4ede3;
+            color: #2b2520;
+            line-height: 1.9;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Aged paper texture */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3' numOctaves='6' /%3E%3CfeColorMatrix values='0 0 0 0 0, 0 0 0 0 0, 0 0 0 0 0, 0 0 0 0.03 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.8;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Subtle coffee stains */
+        .age-mark {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.08;
+        }
+
+        .stain-1 {
+            width: 180px;
+            height: 200px;
+            background: radial-gradient(ellipse, rgba(101, 67, 33, 0.3), transparent 70%);
+            top: 8%;
+            right: 12%;
+            filter: blur(15px);
+        }
+
+        .stain-2 {
+            width: 220px;
+            height: 190px;
+            background: radial-gradient(ellipse, rgba(89, 60, 31, 0.25), transparent 65%);
+            bottom: 15%;
+            left: 8%;
+            filter: blur(20px);
+        }
+
+        /* Header */
+        header {
+            padding: 3rem 2rem 2rem;
+            text-align: left;
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            border-bottom: 1px solid rgba(43, 37, 32, 0.15);
+            margin-bottom: 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 400;
+            color: #2b2520;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .text-button {
+            background: none;
+            border: none;
+            font-family: 'Courier New', 'Courier', monospace;
+            font-size: 0.9rem;
+            color: #5a4f47;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            letter-spacing: 0.05em;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .text-button:hover {
+            color: #2b2520;
+        }
+
+        /* Main content */
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 2rem 6rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Form container - worn paper */
+        .form-container {
+            background: 
+                linear-gradient(to bottom, 
+                    rgba(255, 255, 255, 0.6) 0%,
+                    rgba(253, 251, 248, 0.8) 5%,
+                    rgba(247, 243, 236, 0.9) 100%
+                );
+            padding: 3rem;
+            position: relative;
+            border: 1px solid rgba(43, 37, 32, 0.12);
+            box-shadow: 
+                0 2px 8px rgba(43, 37, 32, 0.08),
+                0 1px 2px rgba(43, 37, 32, 0.06),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+            margin-bottom: 2rem;
+        }
+
+        /* Worn edges */
+        .form-container::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: 
+                linear-gradient(to right, 
+                    rgba(139, 90, 43, 0.08) 0%,
+                    transparent 3%,
+                    transparent 97%,
+                    rgba(139, 90, 43, 0.08) 100%
+                ),
+                linear-gradient(to bottom,
+                    rgba(139, 90, 43, 0.06) 0%,
+                    transparent 3%,
+                    transparent 97%,
+                    rgba(139, 90, 43, 0.1) 100%
+                );
+            opacity: 0.6;
+        }
+
+        .form-container::after {
+            content: '';
+            position: absolute;
+            top: 15%;
+            right: 8%;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle at center, rgba(139, 90, 43, 0.04), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            color: #2b2520;
+            margin-bottom: 2rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .form-group {
+            margin-bottom: 1.8rem;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            color: #2b2520;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.05em;
+        }
+
+        label::before {
+            content: '> ';
+            color: #5a4f47;
+        }
+
+        input[type="text"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            font-family: 'Courier New', 'Courier', monospace;
+            font-size: 0.95rem;
+            color: #2b2520;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(43, 37, 32, 0.2);
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+        }
+
+        textarea {
+            min-height: 250px;
+            resize: vertical;
+            line-height: 1.8;
+        }
+
+        input[type="text"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.8);
+            border-color: rgba(43, 37, 32, 0.4);
+            box-shadow: 0 0 0 2px rgba(43, 37, 32, 0.05);
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .submit-button {
+            flex: 1;
+            padding: 1rem;
+            font-family: 'Courier New', 'Courier', monospace;
+            font-size: 0.95rem;
+            color: #f4ede3;
+            background: #2b2520;
+            border: 1px solid #2b2520;
+            cursor: pointer;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .submit-button:hover {
+            background: #3d3028;
+            border-color: #3d3028;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(43, 37, 32, 0.2);
+        }
+
+        .submit-button:active {
+            transform: translateY(0);
+        }
+
+        .secondary-button {
+            flex: 1;
+            padding: 1rem;
+            font-family: 'Courier New', 'Courier', monospace;
+            font-size: 0.95rem;
+            color: #2b2520;
+            background: transparent;
+            border: 1px solid rgba(43, 37, 32, 0.3);
+            cursor: pointer;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .secondary-button:hover {
+            background: rgba(43, 37, 32, 0.05);
+            border-color: rgba(43, 37, 32, 0.5);
+        }
+
+        .success-message {
+            background: rgba(101, 139, 67, 0.15);
+            border: 1px solid rgba(101, 139, 67, 0.3);
+            padding: 1rem;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+            color: #3a4a2f;
+            display: none;
+        }
+
+        .success-message.visible {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .form-container {
+                padding: 2rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Subtle age marks -->
+    <div class="age-mark stain-1"></div>
+    <div class="age-mark stain-2"></div>
+
+    <header>
+        <h1>ADMIN PANEL</h1>
+        <div class="header-actions">
+            <a href="writing-portfolio.html" class="text-button">view site</a>
+            <button class="text-button" onclick="logout()">logout</button>
+        </div>
+    </header>
+
+    <main>
+        <div class="success-message" id="successMessage">
+            ✓ Writing piece added successfully!
+        </div>
+
+        <div class="form-container">
+            <h2>Add New Writing</h2>
+            
+            <form id="addPieceForm" onsubmit="handleSubmit(event)">
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input 
+                        type="text" 
+                        id="title" 
+                        name="title" 
+                        required
+                        placeholder="Enter the title of your piece"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" name="category" required>
+                        <option value="">Select a category...</option>
+                        <option value="prose">Prose</option>
+                        <option value="poetry">Poetry</option>
+                        <option value="creative-nonfiction">Creative Nonfiction</option>
+                        <option value="script">Script</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="meta">Metadata</label>
+                    <input 
+                        type="text" 
+                        id="meta" 
+                        name="meta" 
+                        required
+                        placeholder="e.g., Prose • Winter 2024"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="content">Content</label>
+                    <textarea 
+                        id="content" 
+                        name="content" 
+                        required
+                        placeholder="Paste or type your writing here...&#10;&#10;For prose: Separate paragraphs with blank lines&#10;For poetry: Write each line naturally&#10;For scripts: Use standard formatting"
+                    ></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="submit-button">
+                        Add to Collection
+                    </button>
+                    <button type="reset" class="secondary-button">
+                        Clear Form
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="form-container">
+            <h2>Instructions</h2>
+            <p style="margin-bottom: 1rem; color: #5a4f47; font-size: 0.9rem;">
+                <strong>Note:</strong> This is a demo admin panel. In a real implementation, you would need:
+            </p>
+            <ul style="color: #5a4f47; font-size: 0.9rem; line-height: 1.8; margin-left: 1.5rem;">
+                <li>A backend server (Node.js, Python, PHP, etc.)</li>
+                <li>A database (MongoDB, PostgreSQL, MySQL, etc.)</li>
+                <li>Proper authentication system</li>
+                <li>API endpoints to save and retrieve data</li>
+            </ul>
+            <p style="margin-top: 1rem; color: #5a4f47; font-size: 0.9rem;">
+                Currently, pieces are stored in localStorage and will persist only in this browser.
+            </p>
+        </div>
+    </main>
+
+    <script>
+        // Check authentication
+        const authToken = sessionStorage.getItem('authToken');
+        if (!authToken) {
+            window.location.href = 'login.html';
+        }
+
+        function logout() {
+            sessionStorage.removeItem('authToken');
+            sessionStorage.removeItem('username');
+            window.location.href = 'login.html';
+        }
+
+        async function handleSubmit(event) {
+            event.preventDefault();
+
+            const title = document.getElementById('title').value;
+            const category = document.getElementById('category').value;
+            const meta = document.getElementById('meta').value;
+            const content = document.getElementById('content').value;
+
+            // Determine classes based on category
+            let classes = '';
+            if (category === 'poetry') classes = 'poetry';
+            else if (category === 'script') classes = 'script';
+
+            try {
+                const response = await fetch('/api/pieces', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        category,
+                        title,
+                        meta,
+                        content,
+                        classes
+                    })
+                });
+
+                if (response.ok) {
+                    // Show success message
+                    const successMessage = document.getElementById('successMessage');
+                    successMessage.classList.add('visible');
+                    
+                    // Reset form
+                    document.getElementById('addPieceForm').reset();
+                    
+                    // Hide success message after 4 seconds
+                    setTimeout(() => {
+                        successMessage.classList.remove('visible');
+                    }, 4000);
+
+                    // Scroll to top
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else if (response.status === 401) {
+                    // Token expired or invalid
+                    alert('Session expired. Please login again.');
+                    logout();
+                } else {
+                    throw new Error('Failed to save piece');
+                }
+            } catch (error) {
+                console.error('Error saving piece:', error);
+                alert('Error saving piece. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>

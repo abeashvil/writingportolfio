@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Creative Writing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', 'Courier', monospace;
+            background: #f4ede3;
+            color: #2b2520;
+            line-height: 1.9;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Aged paper texture */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3' numOctaves='6' /%3E%3CfeColorMatrix values='0 0 0 0 0, 0 0 0 0 0, 0 0 0 0 0, 0 0 0 0.03 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.8;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Subtle coffee stains */
+        .age-mark {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.08;
+        }
+
+        .stain-1 {
+            width: 180px;
+            height: 200px;
+            background: radial-gradient(ellipse, rgba(101, 67, 33, 0.3), transparent 70%);
+            top: 15%;
+            right: 20%;
+            filter: blur(15px);
+        }
+
+        .stain-2 {
+            width: 220px;
+            height: 190px;
+            background: radial-gradient(ellipse, rgba(89, 60, 31, 0.25), transparent 65%);
+            bottom: 20%;
+            left: 15%;
+            filter: blur(20px);
+        }
+
+        /* Login container - worn paper sheet */
+        .login-container {
+            background: 
+                linear-gradient(to bottom, 
+                    rgba(255, 255, 255, 0.6) 0%,
+                    rgba(253, 251, 248, 0.8) 5%,
+                    rgba(247, 243, 236, 0.9) 100%
+                );
+            padding: 3rem;
+            max-width: 450px;
+            width: 90%;
+            position: relative;
+            border: 1px solid rgba(43, 37, 32, 0.12);
+            box-shadow: 
+                0 4px 16px rgba(43, 37, 32, 0.12),
+                0 2px 4px rgba(43, 37, 32, 0.08),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+            z-index: 1;
+        }
+
+        /* Worn edges */
+        .login-container::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: 
+                linear-gradient(to right, 
+                    rgba(139, 90, 43, 0.08) 0%,
+                    transparent 3%,
+                    transparent 97%,
+                    rgba(139, 90, 43, 0.08) 100%
+                ),
+                linear-gradient(to bottom,
+                    rgba(139, 90, 43, 0.06) 0%,
+                    transparent 3%,
+                    transparent 97%,
+                    rgba(139, 90, 43, 0.1) 100%
+                );
+            opacity: 0.6;
+        }
+
+        /* Small crease */
+        .login-container::after {
+            content: '';
+            position: absolute;
+            top: 15%;
+            right: 8%;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle at center, rgba(139, 90, 43, 0.04), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 400;
+            color: #2b2520;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: #5a4f47;
+            font-style: italic;
+            text-align: center;
+            margin-bottom: 2.5rem;
+            letter-spacing: 0.03em;
+        }
+
+        .form-group {
+            margin-bottom: 1.8rem;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            color: #2b2520;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.05em;
+        }
+
+        label::before {
+            content: '> ';
+            color: #5a4f47;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            font-family: 'Courier New', 'Courier', monospace;
+            font-size: 0.95rem;
+            color: #2b2520;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(43, 37, 32, 0.2);
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.8);
+            border-color: rgba(43, 37, 32, 0.4);
+            box-shadow: 0 0 0 2px rgba(43, 37, 32, 0.05);
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 1rem;
+            font-family: 'Courier New', 'Courier', monospace;
+            font-size: 0.95rem;
+            color: #f4ede3;
+            background: #2b2520;
+            border: 1px solid #2b2520;
+            cursor: pointer;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            margin-top: 0.5rem;
+        }
+
+        .submit-button:hover {
+            background: #3d3028;
+            border-color: #3d3028;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(43, 37, 32, 0.2);
+        }
+
+        .submit-button:active {
+            transform: translateY(0);
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: #5a4f47;
+            text-decoration: none;
+            letter-spacing: 0.03em;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #2b2520;
+        }
+
+        .back-link::before {
+            content: '← ';
+        }
+
+        .error-message {
+            background: rgba(139, 90, 43, 0.1);
+            border: 1px solid rgba(139, 90, 43, 0.3);
+            padding: 0.8rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: #6b5444;
+            display: none;
+        }
+
+        .error-message.visible {
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .login-container {
+                padding: 2rem;
+            }
+
+            h1 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Subtle age marks -->
+    <div class="age-mark stain-1"></div>
+    <div class="age-mark stain-2"></div>
+
+    <div class="login-container">
+        <h1>ADMIN</h1>
+        <p class="subtitle">enter credentials to continue</p>
+
+        <div class="error-message" id="errorMessage">
+            Invalid credentials. Please try again.
+        </div>
+
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input 
+                    type="text" 
+                    id="username" 
+                    name="username" 
+                    required
+                    autocomplete="username"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    required
+                    autocomplete="current-password"
+                >
+            </div>
+
+            <button type="submit" class="submit-button">
+                Login
+            </button>
+        </form>
+
+        <a href="writing-portfolio.html" class="back-link">back to writing</a>
+    </div>
+
+    <script>
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    // Store token in sessionStorage
+                    sessionStorage.setItem('authToken', data.token);
+                    sessionStorage.setItem('username', data.username);
+                    // Redirect to admin panel
+                    window.location.href = 'admin-panel.html';
+                } else {
+                    // Show error
+                    errorMessage.classList.add('visible');
+                    document.getElementById('password').value = '';
+                    
+                    // Hide error after 3 seconds
+                    setTimeout(() => {
+                        errorMessage.classList.remove('visible');
+                    }, 3000);
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                errorMessage.textContent = 'Server error. Please try again later.';
+                errorMessage.classList.add('visible');
+                
+                setTimeout(() => {
+                    errorMessage.classList.remove('visible');
+                    errorMessage.textContent = 'Invalid credentials. Please try again.';
+                }, 3000);
+            }
+        }
+
+        // Check if already logged in
+        if (sessionStorage.getItem('authToken')) {
+            window.location.href = 'admin-panel.html';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7
+    container_name: writing-portfolio-db
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: writing-portfolio
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - writing-network
+
+  # Backend API
+  backend:
+    build: ./backend
+    container_name: writing-portfolio-backend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      MONGODB_URI: mongodb://mongodb:27017/writing-portfolio
+      JWT_SECRET: local-dev-secret-change-in-production
+    depends_on:
+      - mongodb
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    networks:
+      - writing-network
+
+networks:
+  writing-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+    driver: local
